@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Personal Trading Viewer</title>
+<meta name="description" content="Market dashboard and browser-side backtester for China black-series futures (rebar, iron ore, coke, coking coal, ferroalloys) and crypto: attention, volatility and capital flow.">
+<meta name="theme-color" content="#14110F">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/app.css">
+<script>
+  // apply saved preferences before first paint
+  try {
+    const t = localStorage.getItem("ptv.theme"); if (t) document.documentElement.dataset.theme = t;
+    const c = localStorage.getItem("ptv.colors"); if (c) document.documentElement.dataset.colors = c;
+  } catch (e) {}
+</script>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#/">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="14" width="5" height="12" rx="1"/><rect x="11" y="8" width="5" height="18" rx="1"/><rect x="19" y="4" width="5" height="22" rx="1"/><path d="M3 29h26" stroke-width="2"/></svg>
+    <span class="brand-name">Personal Trading Viewer</span>
+  </a>
+  <nav class="nav" aria-label="Primary">
+    <a href="#/" data-route="markets">Markets</a>
+    <a href="#/backtest" data-route="backtest">Backtest</a>
+    <a href="#/method" data-route="method">Methodology</a>
+  </nav>
+  <div class="tools">
+    <span class="stamp" id="stamp" title="Last data build">—</span>
+    <button class="icon-btn" id="btn-colors" title="Toggle up/down colour convention">▲▼</button>
+    <button class="icon-btn" id="btn-theme" title="Toggle light / dark">◐</button>
+  </div>
+</header>
+
+<main id="view" tabindex="-1">
+  <div class="loading">Loading market data…</div>
+</main>
+
+<footer class="foot">
+  <p>Data: Sina Finance (per-contract futures bars), Coinbase (spot crypto), Hyperliquid (perp funding), Wikimedia (pageviews). Futures series are rebuilt from individual contracts and ratio back-adjusted. For research and education only — not investment advice.</p>
+  <p><a href="https://github.com/sock-wy/Personal-Trading-Viewer">Source on GitHub</a> · Charts by <a href="https://www.tradingview.com/">TradingView</a> Lightweight Charts™</p>
+</footer>
+
+<script src="assets/vendor/lightweight-charts.standalone.production.js"></script>
+<script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

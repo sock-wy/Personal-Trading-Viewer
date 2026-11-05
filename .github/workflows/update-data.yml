@@ -1,0 +1,60 @@
+name: Update market data
+
+on:
+  schedule:
+    # 08:10 UTC = 16:10 Beijing, after the China day session closes (Mon-Fri)
+    - cron: "10 8 * * 1-5"
+    # 00:20 UTC, after the crypto daily candle closes
+    - cron: "20 0 * * *"
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "futures | crypto | (blank = both)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install
+        run: pip install -r pipeline/requirements.txt
+
+      - name: Build data
+        run: |
+          ONLY="${{ github.event.inputs.only }}"
+          if [ -z "$ONLY" ]; then
+            if [ "${{ github.event.schedule }}" = "20 0 * * *" ]; then ONLY=crypto; fi
+            if [ "${{ github.event.schedule }}" = "10 8 * * 1-5" ]; then ONLY=futures; fi
+          fi
+          python pipeline/build.py ${ONLY:+--only $ONLY}
+
+      - name: Test (guards against publishing broken data)
+        run: npm test
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data pipeline/cache
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -m "data: update $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push
