@@ -123,3 +123,35 @@ test("every strategy runs on every instrument (daily + hourly)", () => {
     }
   }
 });
+
+import { priceProfile, positioningCost, oiScan } from "../assets/js/core/structure.js";
+import { computeChain } from "../assets/js/core/chain.js";
+
+test("positioning cost line is causal and stays inside the price range", () => {
+  for (const sym of ["RB", "BTC"]) {
+    const b = load(sym);
+    const full = positioningCost(b, 25);
+    const cut = positioningCost(sliceBars(b, 0, 999), 25);
+    for (let i = 0; i < 1000; i++) assert.ok(same(full[i], cut[i]));
+    const lo = Math.min(...b.l), hi = Math.max(...b.h);
+    assert.ok(full.filter(isNum).every((x) => x >= lo && x <= hi));
+  }
+});
+
+test("price profile: weights sum to total volume, value area holds >= 70%", () => {
+  const b = load("I", "1h");
+  const p = priceProfile(b, b.n - 600, b.n - 1);
+  const vol = b.v.slice(b.n - 600).reduce((a, x) => a + x, 0);
+  assert.ok(Math.abs(p.total - vol) / vol < 1e-9);
+  const inVA = p.bins.filter((x) => x.price >= p.val && x.price <= p.vah).reduce((a, x) => a + x.w, 0);
+  assert.ok(inVA >= 0.7 * p.total - 1e-6);
+  assert.ok(p.poc >= p.val && p.poc <= p.vah);
+});
+
+test("OI scanner and chain spreads produce finite values", () => {
+  const syms = ["RB", "HC", "I", "J", "JM", "SF", "SM"];
+  const B = Object.fromEntries(syms.map((s) => [s, load(s)]));
+  for (const s of syms) { const o = oiScan(B[s]); assert.ok(o.ratio > 0 && o.ratio <= 1); }
+  const ch = computeChain(B);
+  for (const v of Object.values(ch.series)) assert.ok(isNum(v.last) && isNum(v.pctNow));
+});

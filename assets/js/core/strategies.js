@@ -113,3 +113,19 @@ export function getStrategy(id) {
 export function defaultParams(strat) {
   return Object.fromEntries(strat.params.map((p) => [p.key, p.def]));
 }
+
+// Chinese copy for the UI.
+export const STRATEGY_ZH = {
+  sma_cross: { name: "均线交叉", family: "趋势", desc: "快线在慢线之上做多，之下做空。",
+    params: { fast: "快均线", slow: "慢均线" } },
+  donchian: { name: "唐奇安通道突破", family: "趋势",
+    desc: "海龟法则：收盘突破前 N 根 K 线高/低点入场，反向跌破 M 根通道出场。",
+    params: { entry: "入场通道", exit: "出场通道" } },
+  boll_mr: { name: "布林带均值回归", family: "均值回归", desc: "收盘偏离 N 根均值超过 k 倍标准差时反向开仓，回到均值平仓。",
+    params: { n: "回看周期", k: "带宽（标准差）" } },
+  tsmom: { name: "时间序列动量", family: "趋势", desc: "按过去 L 根 K 线收益的正负方向持仓（Moskowitz, Ooi & Pedersen 2012），建议配合波动率目标仓位。",
+    params: { lookback: "回看周期" } },
+  flow_breakout: { name: "资金流确认突破", family: "趋势 + 资金流",
+    desc: "唐奇安突破，但只有在资金流确认方向且关注度高于阈值时才入场。期货：持仓量必须上升（增仓突破，而非空头回补）；加密货币：Chaikin 资金流须与突破方向一致。",
+    params: { entry: "入场通道", exit: "出场通道", minAttention: "最低关注度分位" } },
+};

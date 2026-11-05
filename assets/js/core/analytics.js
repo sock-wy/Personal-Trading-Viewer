@@ -27,16 +27,16 @@ export function computeFeatures(bars) {
     const vol = bars.freq === "1d" ? bars.V : bars.v;
     const oi = bars.freq === "1d" ? bars.OI : bars.oi;
     activity = vol;
-    activityLabel = bars.freq === "1d" ? "All-contract volume" : "Dominant-contract volume";
+    activityLabel = bars.freq === "1d" ? ["All-contract volume", "全合约成交量"] : ["Dominant-contract volume", "主力合约成交量"];
     // Volume / open interest: how fast positions turn over — speculative intensity.
     second = vol.map((v, i) => oi[i] > 0 ? v / oi[i] : NaN);
-    secondLabel = "Turnover (volume / OI)";
+    secondLabel = ["Turnover (volume / OI)", "换手率（成交/持仓）"];
   } else {
     activity = bars.v.map((v, i) => v * c[i]); // USD volume
-    activityLabel = "USD volume (Coinbase spot)";
+    activityLabel = ["USD volume (Coinbase spot)", "美元成交额（Coinbase 现货）"];
     if (bars.wiki && bars.wiki.some(isNum)) {
       second = bars.wiki.map((x) => (isNum(x) ? x : NaN));
-      secondLabel = "Wikipedia pageviews";
+      secondLabel = ["Wikipedia pageviews", "维基百科浏览量"];
     }
   }
   const actSmooth = sma(activity.map((v) => (v > 0 ? Math.log(v) : NaN)), FLOW_WINDOW);
@@ -107,23 +107,23 @@ function cryptoFlow(bars, price5, W) {
 }
 
 export const REGIMES = {
-  long_buildup: { label: "Long build-up", short: "Longs adding", tone: "up",
+  long_buildup: { label: "Long build-up", short: "Longs adding", tone: "up", zh: "多头增仓", zh_short: "新多入场", zh_help: "价格上涨、持仓增加：新资金在做多。",
     help: "Price up and open interest up: new money is entering on the long side." },
-  short_buildup: { label: "Short build-up", short: "Shorts adding", tone: "down",
+  short_buildup: { label: "Short build-up", short: "Shorts adding", tone: "down", zh: "空头增仓", zh_short: "新空入场", zh_help: "价格下跌、持仓增加：新资金在做空。",
     help: "Price down and open interest up: new money is entering on the short side." },
-  short_covering: { label: "Short covering", short: "Shorts exiting", tone: "up-weak",
+  short_covering: { label: "Short covering", short: "Shorts exiting", tone: "up-weak", zh: "空头回补", zh_short: "空头离场", zh_help: "价格上涨但持仓下降：上涨由空头平仓推动，而非新多。",
     help: "Price up while open interest falls: the rally is driven by shorts closing, not new longs." },
-  long_liquidation: { label: "Long liquidation", short: "Longs exiting", tone: "down-weak",
+  long_liquidation: { label: "Long liquidation", short: "Longs exiting", tone: "down-weak", zh: "多头平仓", zh_short: "多头离场", zh_help: "价格下跌且持仓下降：多头在离场。",
     help: "Price down while open interest falls: longs are closing out." },
-  accumulation: { label: "Accumulation", short: "Buying pressure", tone: "up",
+  accumulation: { label: "Accumulation", short: "Buying pressure", tone: "up", zh: "吸筹", zh_short: "买盘主导", zh_help: "价格上涨且资金流为正：放量收于高位。",
     help: "Price up and money flow positive: closes sit near highs on heavy volume." },
-  distribution: { label: "Distribution", short: "Selling pressure", tone: "down",
+  distribution: { label: "Distribution", short: "Selling pressure", tone: "down", zh: "派发", zh_short: "卖盘主导", zh_help: "价格下跌且资金流为负：放量收于低位。",
     help: "Price down and money flow negative: closes sit near lows on heavy volume." },
-  absorption: { label: "Absorption", short: "Dip bought", tone: "up-weak",
+  absorption: { label: "Absorption", short: "Dip bought", tone: "up-weak", zh: "承接", zh_short: "逢低买入", zh_help: "价格下跌但资金流为正：抛压被承接。",
     help: "Price down but money flow positive: selling is being absorbed." },
-  divergence: { label: "Weak rally", short: "Rally unbacked", tone: "down-weak",
+  divergence: { label: "Weak rally", short: "Rally unbacked", tone: "down-weak", zh: "量价背离", zh_short: "上涨乏力", zh_help: "价格上涨但资金流为负：上涨缺乏成交量支撑。",
     help: "Price up but money flow negative: the advance lacks volume support." },
-  neutral: { label: "Neutral", short: "Flat", tone: "flat", help: "No clear flow signal." },
+  neutral: { label: "Neutral", short: "Flat", tone: "flat", zh: "中性", zh_short: "平", zh_help: "无明显资金流信号。", help: "No clear flow signal." },
 };
 
 function quadrantFutures(p, d) {
@@ -139,19 +139,20 @@ function quadrantCrypto(p, m) {
 }
 
 export function volRegime(pct) {
-  if (!isNum(pct)) return { label: "—", tone: "flat" };
-  if (pct >= 85) return { label: "Stressed", tone: "hot" };
-  if (pct >= 60) return { label: "Elevated", tone: "warm" };
-  if (pct >= 20) return { label: "Normal", tone: "flat" };
-  return { label: "Calm", tone: "cool" };
+  if (!isNum(pct)) return { label: "—", zh: "—", tone: "flat" };
+  if (pct >= 85) return { label: "Stressed", zh: "剧烈", tone: "hot" };
+  if (pct >= 60) return { label: "Elevated", zh: "偏高", tone: "warm" };
+  if (pct >= 20) return { label: "Normal", zh: "正常", tone: "flat" };
+  return { label: "Calm", zh: "平静", tone: "cool" };
 }
 
-export function attentionLabel(pct) {
+export function attentionLabel(pct, lang = "en") {
+  const zh = lang === "zh";
   if (!isNum(pct)) return "—";
-  if (pct >= 85) return "Crowded";
-  if (pct >= 60) return "High";
-  if (pct >= 30) return "Normal";
-  return "Quiet";
+  if (pct >= 85) return zh ? "拥挤" : "Crowded";
+  if (pct >= 60) return zh ? "较高" : "High";
+  if (pct >= 30) return zh ? "正常" : "Normal";
+  return zh ? "冷清" : "Quiet";
 }
 
 export function snapshot(bars, f) {

@@ -5,13 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Personal Trading Viewer</title>
 <meta name="description" content="Market dashboard and browser-side backtester for China black-series futures (rebar, iron ore, coke, coking coal, ferroalloys) and crypto: attention, volatility and capital flow.">
-<meta name="theme-color" content="#14110F">
+<meta name="theme-color" content="#0B0B0C">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/css/app.css">
 <script>
+  document.documentElement.dataset.theme = "dark";
   // apply saved preferences before first paint
   try {
-    const t = localStorage.getItem("ptv.theme"); if (t) document.documentElement.dataset.theme = t;
+    document.documentElement.dataset.theme = localStorage.getItem("ptv.theme") || "dark";
     const c = localStorage.getItem("ptv.colors"); if (c) document.documentElement.dataset.colors = c;
   } catch (e) {}
 </script>
@@ -23,12 +24,14 @@
     <span class="brand-name">Personal Trading Viewer</span>
   </a>
   <nav class="nav" aria-label="Primary">
-    <a href="#/" data-route="markets">Markets</a>
-    <a href="#/backtest" data-route="backtest">Backtest</a>
-    <a href="#/method" data-route="method">Methodology</a>
+    <a href="#/" data-route="markets" data-i18n="Markets|行情">Markets</a>
+    <a href="#/chain" data-route="chain" data-i18n="Chain|产业链">Chain</a>
+    <a href="#/backtest" data-route="backtest" data-i18n="Backtest|回测">Backtest</a>
+    <a href="#/method" data-route="method" data-i18n="Methodology|方法论">Methodology</a>
   </nav>
   <div class="tools">
     <span class="stamp" id="stamp" title="Last data build">—</span>
+    <button class="icon-btn" id="btn-lang" title="English / 中文">中</button>
     <button class="icon-btn" id="btn-colors" title="Toggle up/down colour convention">▲▼</button>
     <button class="icon-btn" id="btn-theme" title="Toggle light / dark">◐</button>
   </div>
@@ -39,7 +42,7 @@
 </main>
 
 <footer class="foot">
-  <p>Data: Sina Finance (per-contract futures bars), Coinbase (spot crypto), Hyperliquid (perp funding), Wikimedia (pageviews). Futures series are rebuilt from individual contracts and ratio back-adjusted. For research and education only — not investment advice.</p>
+  <p data-i18n="Data: Sina Finance (per-contract futures bars), Coinbase (spot crypto), Hyperliquid (perp funding), Wikimedia (pageviews). Futures series are rebuilt from individual contracts and ratio back-adjusted. For research and education only — not investment advice.|数据：新浪财经（期货逐合约 K 线）、Coinbase（加密现货）、Hyperliquid（永续资金费率）、Wikimedia（浏览量）。期货连续序列由单合约重建并按比例复权。仅供研究与学习，不构成任何投资建议。">Data: Sina Finance (per-contract futures bars), Coinbase (spot crypto), Hyperliquid (perp funding), Wikimedia (pageviews). Futures series are rebuilt from individual contracts and ratio back-adjusted. For research and education only — not investment advice.</p>
   <p><a href="https://github.com/sock-wy/Personal-Trading-Viewer">Source on GitHub</a> · Charts by <a href="https://www.tradingview.com/">TradingView</a> Lightweight Charts™</p>
 </footer>
 

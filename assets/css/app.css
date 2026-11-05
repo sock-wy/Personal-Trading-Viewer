@@ -23,17 +23,17 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #110F0D; --surface: #1A1714; --surface-2: #231F1B; --ink: #EDE7DF; --ink-2: #B9B0A5; --ink-3: #7F776E;
-    --line: #2C2722; --line-2: #3A342D; --accent: #E8692E; --accent-soft: rgba(232, 105, 46, .14);
+    --bg: #070708; --surface: #111113; --surface-2: #1A1A1D; --ink: #ECECEE; --ink-2: #B4B4BA; --ink-3: #7A7A82;
+    --line: #232327; --line-2: #34343A; --accent: #E8692E; --accent-soft: rgba(232, 105, 46, .14);
     --pos: #2FBF8A; --neg: #EF5A5A; --hot: #E8692E; --warm: #D9A441; --cool: #5FA0D0;
-    --grid: rgba(237, 231, 223, .06); --shadow: 0 1px 0 rgba(0,0,0,.3), 0 12px 32px -20px rgba(0,0,0,.9);
+    --grid: rgba(236, 236, 238, .05); --shadow: 0 1px 0 rgba(0,0,0,.3), 0 12px 32px -20px rgba(0,0,0,.9);
   }
 }
 :root[data-theme="dark"] {
-  --bg: #110F0D; --surface: #1A1714; --surface-2: #231F1B; --ink: #EDE7DF; --ink-2: #B9B0A5; --ink-3: #7F776E;
-  --line: #2C2722; --line-2: #3A342D; --accent: #E8692E; --accent-soft: rgba(232, 105, 46, .14);
+  --bg: #070708; --surface: #111113; --surface-2: #1A1A1D; --ink: #ECECEE; --ink-2: #B4B4BA; --ink-3: #7A7A82;
+  --line: #232327; --line-2: #34343A; --accent: #E8692E; --accent-soft: rgba(232, 105, 46, .14);
   --pos: #2FBF8A; --neg: #EF5A5A; --hot: #E8692E; --warm: #D9A441; --cool: #5FA0D0;
-  --grid: rgba(237, 231, 223, .06); --shadow: 0 1px 0 rgba(0,0,0,.3), 0 12px 32px -20px rgba(0,0,0,.9);
+  --grid: rgba(236, 236, 238, .05); --shadow: 0 1px 0 rgba(0,0,0,.3), 0 12px 32px -20px rgba(0,0,0,.9);
 }
 /* up/down colour convention: western (green up) by default, Chinese (red up) on toggle */
 :root { --up: var(--pos); --down: var(--neg); }
@@ -155,7 +155,7 @@ table.mkt th {
   text-align: left; font: 500 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
   padding: 8px 12px; border-bottom: 1px solid var(--line); white-space: nowrap;
 }
-table.mkt td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+table.mkt td { white-space: nowrap; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
 table.mkt tr:last-child td { border-bottom: 0; }
 table.mkt tbody tr { cursor: pointer; transition: background .12s; }
 table.mkt tbody tr:hover { background: var(--surface-2); }
@@ -180,6 +180,28 @@ table.mkt th.r, table.mkt td.r { text-align: right; }
 .explain { padding: 0 16px 16px; color: var(--ink-2); font-size: 13px; }
 .explain dt { font-weight: 650; color: var(--ink); margin-top: 10px; }
 .explain dd { margin: 2px 0 0; }
+
+.brief-list { margin: 0; padding: 4px 16px 16px 34px; display: grid; gap: 8px; color: var(--ink-2); }
+.brief-list b { color: var(--ink); }
+.brief-list a { color: var(--accent); }
+.brief-list .pill { font-size: 11px; padding: 1px 6px; }
+
+/* ------------------------------------------------------------------ chain */
+.chain-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.chain-card .big { font: 650 24px var(--mono); }
+.chain-card .formula { font: 12px var(--mono); color: var(--ink-3); }
+.chain-card .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 10px 0 6px; font-size: 12px; }
+.chain-card .stats div { display: flex; flex-direction: column; }
+.chain-card .stats span:first-child { color: var(--ink-3); font: 600 10px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+.chain-card .stats span:last-child { font: 13px var(--mono); color: var(--ink); }
+.chain-card p { color: var(--ink-2); font-size: 12.5px; margin: 6px 0 0; }
+.flowdiag { display: block; width: 100%; height: auto; }
+.profile-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; }
+.calc .field { grid-template-columns: 1fr 130px; }
+.calc-out { display: grid; grid-template-columns: 1fr; gap: 8px 14px; font-size: 13px; margin-top: 10px; }
+.calc-out div { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--line); padding: 3px 0; }
+.calc-out span:last-child { font-family: var(--mono); color: var(--ink); }
+@media (max-width: 900px) { .chain-grid, .profile-wrap { grid-template-columns: 1fr; } }
 
 /* ------------------------------------------------------------------ instrument */
 .inst-head { display: flex; align-items: flex-end; gap: 28px; flex-wrap: wrap; margin-bottom: 18px; }
